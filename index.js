@@ -1,9 +1,27 @@
 var express = require('express');
 var app = express();
 
+const MongoClient = require('mongodb').MongoClient
+
+let https = require('https');
+
+
 // set the port of our application
 // process.env.PORT lets the port be set by Heroku
 var port = process.env.PORT || 5000;
+
+var subscriptionKey = '5c464dbc4c3b40ddb70edda1e4e6afa0';
+var host = 'api.cognitive.microsoft.com';
+var path = '/bing/v7.0/images/search';
+
+
+MongoClient.connect("mongodb://freecodecamp:heroku@ds123976.mlab.com:23976/heroku_ph8p01tk", (err, database) => {
+  if (err) return console.log(err)
+  db = database
+  app.listen(port, () => {
+  })
+})
+
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -17,128 +35,75 @@ app.get(['/','/about'], function(req, res) {
   res.render('index');
 });
 
-app.get('/:Qpath', (req, res) => {
-
-  var id = req.params.Qpath;
-  var timestamp
-  var myDate
-  var unix
-  var date
-  var month
-  var re
-  var naturalDate
+app.get(['/search/:Qpath','/search/:Qpath/?'], (reqx, resx) => {
 
 
-  if (isNaN(id)) {
+var searchData={"searchQuery":reqx.params.Qpath}
+var num=reqx.query
+var qoffset=0;
 
-    id = id.replace(/%20|\+|\//g, '');
+db.collection('recentSearches').save(searchData, (err, result) => {
+  if (err) return console.log(err)
+})
 
-    re = /January|Febuary|March|April|May|June|July|August|September|October|November|December/i;
+  let response_handler = function (response) {
+      let body = '';
+      response.on('data', function (d) {
+          body += d;
+      });
+      response.on('end', function () {
 
-    month = id.match(re);
+          body = JSON.parse(body)
 
-    id = id.replace(re, "");
+          if(!isNaN(parseInt(num.offset)))
+            qoffset=parseInt(num.offset)
 
-    date = month + " " + id.slice(0, 3) + ", " + id.slice(4, 9);
+          resx.writeHead(200, {
+            'Content-Type': 'application/json'
+          });
+          resx.end(JSON.stringify(body.value.slice(qoffset,qoffset+10)));
 
-    myDate = new Date(date);
-    unix = myDate.getTime();
+      });
+      response.on('error', function (e) {
+          console.log('Error: ' + e.message);
+      });
+  };
 
-    if (!isNaN(unix))
-      timestamp = {
-        "unix": unix,
-        "natural": date
-      }
-    else
-      timestamp = {
-        "unix": null,
-        "natural": null
-      }
-  } else {
+  let bing_image_search = function (search) {
+    console.log('Searching images for: ' + reqx.params.Qpath);
+    let request_params = {
+          method : 'GET',
+          hostname : host,
+          path : path + '?q=' + encodeURIComponent(search),
+          headers : {
+              'Ocp-Apim-Subscription-Key' : subscriptionKey,
+          }
+      };
 
-    naturalDate = new Date(id * 1000);
-
-    switch (naturalDate.getMonth()) {
-
-      case 0:
-        month = "January";
-        break;
-
-      case 1:
-        month = "February";
-        break;
-
-      case 2:
-        month = "March";
-        break;
-
-      case 3:
-        month = "April";
-        break;
-
-      case 4:
-        month = "May";
-        break;
-
-      case 5:
-        month = "June";
-        break;
-
-      case 6:
-        month = "July";
-        break;
-
-      case 7:
-        month = "August";
-        break;
-
-      case 8:
-        month = "September";
-        break;
-
-      case 9:
-        month = "October";
-        break;
-
-      case 10:
-        month = "November";
-        break;
-
-      case 11:
-        month = "December";
-        break;
-    }
-
-
-    date = naturalDate.getDate();
-
-    myDate= month + " " + date + ", " + naturalDate.getFullYear();
-
-    myDate = new Date(myDate);
-
-    unix = myDate.getTime();
-
-    if (!isNaN(unix))
-          timestamp = {
-        "unix": id,
-        "natural": month + " " + date + ", " + naturalDate.getFullYear()
-      }
-    else
-
-      timestamp = {
-        "unix": null,
-        "natural": null
-      }
-
+      let req = https.request(request_params, response_handler);
+      req.end();
   }
 
-  res.writeHead(200, {
-    'Content-Type': 'application/json'
-  });
-  res.end(JSON.stringify(timestamp));
-
+  if (subscriptionKey.length === 32) {
+      bing_image_search(reqx.params.Qpath);
+  } else {
+      console.log('Invalid Bing Search API subscription key!');
+      console.log('Please paste yours into the source code.');
+  }
 });
 
-app.listen(port, function() {
-  console.log('Our app is running on http://localhost:' + port);
-});
+
+app.get('/recentSearches', (req, res) => {
+  db.collection('recentSearches').find({},{_id:0}).toArray((err, result) => {
+    if (err) return console.log(err)
+    else if (result.length == 0)
+      res.write("No Recent Searches")
+    else{
+    res.writeHead(200, {
+      'Content-Type': 'application/json'
+    });
+    res.end(JSON.stringify(result));
+  }
+    res.end();
+  })
+})

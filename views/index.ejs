@@ -1,39 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <title>timeStamp</title>
+  <title>imageSearch</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 
-<div class="jumbotron text-center">
-  <h1>timestamp microservice</h1>
-  <p>API Basejump</p>
-</div>
+  <div class="jumbotron text-center">
+    <h1>image search</h1>
+    <p>API Basejump</p>
+  </div>
 
-<div class="container">
-	<h2>User stories:</h2><br>
-	<blockquote>
-<ul> 1) I can get the image URLs, alt text and page urls for a set of images relating to a given search string.</ul>
-<ul> 2) I can paginate through the responses by adding a ?offset=2 parameter to the URL.</ul>
-<ul> 3) I can get a list of the most recently submitted search strings.</ul>
-</blockquote>
+  <div class="container">
+    <h2>User stories:</h2><br>
+    <blockquote>
+      <ul> 1) I can get the image URLs, alt text and page urls for a set of images relating to a given search string.</ul>
+      <ul> 2) I can paginate through the responses by adding a ?offset=2 parameter to the URL.</ul>
+      <ul> 3) I can get a list of the most recently submitted search strings.</ul>
+    </blockquote>
 
-<h2>Sample Input</h2>
+    <h2>Sample Input</h2>
 
-<code>https://timestamp-kalpitp.herokuapp.com/December%2015,%202015</code><br>
-<code>https://timestamp-kalpitp.herokuapp.com/1450137600</code><br>
+    <code>https://imagesearch-kalpitp.herokuapp.com/recentSearches</code><br>
+    <code>https://imagesearch-kalpitp.herokuapp.com//search/search-string</code><br>
+    <code>https://imagesearch-kalpitp.herokuapp.com//search/search-string/?ofsset=2></code><br>
 
-<h2>Sample Output</h2><br>
+    <h2>Sample Output</h2><br>
 
-<code>
-	 { "unix": 1450137600, "natural": "December 15, 2015" }
- </code>
-</div>
+    <code>
+      {
+   <br>&nbsp&nbsp"webSearchUrl": lorum,
+   <br>&nbsp&nbsp"name": ipsum,
+   <br>&nbsp&nbsp"thumbnailUrl": dolor,
+   <br>&nbsp&nbsp"datePublished": sit,
+   <br>&nbsp&nbsp"contentUrl": amet,
+   <br>&nbsp&nbsp"hostPageUrl": consectetur,
+   <br>&nbsp&nbsp"contentSize":  adipiscing,
+   <br>&nbsp&nbsp"encodingFormat": elit,
+   <br>&nbsp&nbsp"hostPageDisplayUrl":  sed,
+   <br>&nbsp&nbsp"width": do,
+   <br>&nbsp&nbsp"height": eiusmod,
+   <br>&nbsp&nbsp"thumbnail":
+   <br>&nbsp&nbsp&nbsp{
+   <br>&nbsp&nbsp&nbsp&nbsp&nbsp"width": tempor,
+   <br>&nbsp&nbsp&nbsp&nbsp&nbsp"height": incididunt
+   <br>&nbsp&nbsp&nbsp},
+  <br> &nbsp&nbsp"imageInsightsToken": ut
+  <br> &nbsp&nbsp"insightsMetadata":
+  <br>&nbsp&nbsp&nbsp{
+  <br> &nbsp&nbsp&nbsp&nbsp"pagesIncludingCount": 1,
+  <br> &nbsp&nbsp&nbsp&nbsp"availableSizesCount": 1
+  <br> &nbsp&nbsp&nbsp},
+  <br> &nbsp&nbsp"imageId": labore,
+  <br> &nbsp&nbsp"accentColor": "et"
+  <br>},
+</code>
+  </div>
 
 </body>
+
 </html>
