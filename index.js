@@ -15,7 +15,7 @@ var host = 'api.cognitive.microsoft.com';
 var path = '/bing/v7.0/images/search';
 
 
-MongoClient.connect("mongodb://freecodecamp:heroku@ds123976.mlab.com:23976/heroku_ph8p01tk", (err, database) => {
+MongoClient.connect("mongodb://<name>:<password>@ds123976.mlab.com:23976/heroku_ph8p01tk", (err, database) => {
   if (err) return console.log(err)
   db = database
   app.listen(port, () => {
